@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}Posts{% endblock %}
+
+{% block content %}
+  <h2>Posts</h2>
+
+  {% if post_list %}
+    <ul class="post-list">
+      {% for post in post_list %}
+        <li>
+          <a href="{% url 'blog:detail' post.id %}">{{ post.title }}</a>
+          <small>Publicado em {{ post.date|date:"d/m/Y H:i" }}</small>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>Nenhum post publicado ainda.</p>
+  {% endif %}
+
+  <p><a class="button primary" href="{% url 'blog:create' %}">Escrever novo post</a></p>
+{% endblock %}

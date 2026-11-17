@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Novo post{% endblock %}
+
+{% block content %}
+  <h2>Novo post</h2>
+
+  <form action="{% url 'blog:create' %}" method="post">
+    {% csrf_token %}
+    <label for="title">Título</label>
+    <input type="text" id="title" name="title">
+
+    <label for="content">Conteúdo (HTML)</label>
+    <textarea id="content" name="content" rows="12"></textarea>
+
+    <p>
+      <button type="submit">Publicar</button>
+      <a class="button" href="{% url 'blog:index' %}">Cancelar</a>
+    </p>
+  </form>
+{% endblock %}
