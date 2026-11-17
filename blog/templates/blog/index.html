@@ -1,9 +1,14 @@
 {% extends 'base.html' %}
 
-{% block title %}Posts{% endblock %}
+{% block title %}{% if category %}Categoria: {{ category.name }}{% else %}Posts{% endif %}{% endblock %}
 
 {% block content %}
-  <h2>Posts</h2>
+  {% if category %}
+    <h2>Categoria: {{ category.name }}</h2>
+    {% if category.description %}<p class="meta">{{ category.description }}</p>{% endif %}
+  {% else %}
+    <h2>Posts</h2>
+  {% endif %}
 
   {% if post_list %}
     <ul class="post-list">
@@ -15,8 +20,12 @@
       {% endfor %}
     </ul>
   {% else %}
-    <p>Nenhum post publicado ainda.</p>
+    <p>{% if category %}Nenhum post nesta categoria.{% else %}Nenhum post publicado ainda.{% endif %}</p>
   {% endif %}
 
-  <p><a class="button primary" href="{% url 'blog:create' %}">Escrever novo post</a></p>
+  {% if category %}
+    <p><a class="button" href="{% url 'blog:categories' %}">Ver todas as categorias</a></p>
+  {% else %}
+    <p><a class="button primary" href="{% url 'blog:create' %}">Escrever novo post</a></p>
+  {% endif %}
 {% endblock %}
