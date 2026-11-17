@@ -4,7 +4,7 @@ from django.urls import reverse, reverse_lazy
 from django.views import generic
 
 from .forms import CommentForm, PostForm
-from .models import Post
+from .models import Category, Post
 
 
 # ---------------------------------------------------------------- Posts ---
@@ -27,6 +27,8 @@ class PostDetailView(generic.DetailView):
         # Comentários do post, do mais recente para o mais antigo.
         context['comments'] = self.object.comments.order_by('-date')
         context['comment_form'] = CommentForm(initial=self._initial_author())
+        # Categorias às quais o post pertence.
+        context['categories'] = self.object.categories.all()
         return context
 
     def _initial_author(self):
@@ -72,3 +74,24 @@ def create_comment(request, pk):
             initial['author'] = request.user.pk
         form = CommentForm(initial=initial)
     return render(request, 'blog/comment.html', {'form': form, 'post': post})
+
+
+# ----------------------------------------------------------- Categorias ---
+
+class CategoryListView(generic.ListView):
+    model = Category
+    template_name = 'blog/categories.html'
+    context_object_name = 'category_list'
+
+
+class CategoryDetailView(generic.DetailView):
+    # Responde com 404 se a categoria não existir e reutiliza o template
+    # de listagem de posts da parte 1 (blog/index.html).
+    model = Category
+    template_name = 'blog/index.html'
+    context_object_name = 'category'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['post_list'] = self.object.posts.order_by('-date')
+        return context

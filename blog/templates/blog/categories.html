@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}Categorias{% endblock %}
+
+{% block content %}
+  <h2>Categorias</h2>
+
+  {% if category_list %}
+    <ul class="post-list">
+      {% for category in category_list %}
+        <li>
+          <a href="{% url 'blog:category' category.id %}">{{ category.name }}</a>
+          <small>{{ category.description }} · {{ category.posts.count }} post{{ category.posts.count|pluralize }}</small>
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p>Nenhuma categoria cadastrada. Crie categorias pelo
+       <a href="{% url 'admin:index' %}">administrador</a>.</p>
+  {% endif %}
+{% endblock %}
