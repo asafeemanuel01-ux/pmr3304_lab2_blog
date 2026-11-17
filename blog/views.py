@@ -1,9 +1,9 @@
-# Versão 1: views funcionais, sem Django forms e sem validação de dados.
+# Versão 2: views funcionais utilizando um Django form (com validação).
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
-from django.utils import timezone
 
+from .forms import PostForm
 from .models import Post
 
 
@@ -20,24 +20,25 @@ def detail_post(request, pk):
 
 def create_post(request):
     if request.method == 'POST':
-        post = Post(
-            title=request.POST['title'],
-            content=request.POST['content'],
-            date=timezone.now(),
-        )
-        post.save()
-        return HttpResponseRedirect(reverse('blog:detail', args=(post.id,)))
-    return render(request, 'blog/create.html', {})
+        form = PostForm(request.POST)
+        if form.is_valid():
+            post = form.save()
+            return HttpResponseRedirect(reverse('blog:detail', args=(post.id,)))
+    else:
+        form = PostForm()
+    return render(request, 'blog/create.html', {'form': form})
 
 
 def update_post(request, pk):
     post = get_object_or_404(Post, pk=pk)
     if request.method == 'POST':
-        post.title = request.POST['title']
-        post.content = request.POST['content']
-        post.save()
-        return HttpResponseRedirect(reverse('blog:detail', args=(post.id,)))
-    return render(request, 'blog/update.html', {'post': post})
+        form = PostForm(request.POST, instance=post)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('blog:detail', args=(post.id,)))
+    else:
+        form = PostForm(instance=post)
+    return render(request, 'blog/update.html', {'post': post, 'form': form})
 
 
 def delete_post(request, pk):

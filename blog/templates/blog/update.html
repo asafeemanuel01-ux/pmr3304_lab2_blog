@@ -7,12 +7,7 @@
 
   <form action="{% url 'blog:update' post.id %}" method="post">
     {% csrf_token %}
-    <label for="title">Título</label>
-    <input type="text" id="title" name="title" value="{{ post.title }}">
-
-    <label for="content">Conteúdo (HTML)</label>
-    <textarea id="content" name="content" rows="12">{{ post.content }}</textarea>
-
+    {{ form.as_p }}
     <p>
       <button type="submit">Salvar alterações</button>
       <a class="button" href="{% url 'blog:detail' post.id %}">Cancelar</a>
